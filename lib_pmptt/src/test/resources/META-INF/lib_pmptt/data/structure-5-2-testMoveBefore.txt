@@ -1,0 +1,15 @@
+Předsíň
+    Věšáky
+    Botníky
+Kancelář
+    Kancelářské kontejnery
+    Kancelářské stoly
+Ložnice
+    Noční stolky
+    Komody
+Jídelna
+    Barové židle
+    Stoly
+Obývací pokoj
+    Komody a regály
+    Konferenční stoly

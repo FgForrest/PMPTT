@@ -1,0 +1,31 @@
+Jídelna
+    Barové židle
+    Stoly
+        Barové stoly
+        Dřevěné stoly
+        Jidelní sestavy
+    Židle
+        Dřevěné židle
+        Kovové židle
+Kancelář
+    Kancelářské kontejnery
+    Kancelářské stoly
+Ložnice
+    Komody
+    Noční stolky
+    Čalouněné postele
+        Rozměr 140x200 cm
+        Rozměr 160x200 cm
+    Postele
+        Dřevěné postele
+        Kovové postele
+Obývací pokoj
+    Komody a regály
+        Komody obývákové
+        Regály
+    Konferenční stoly
+        Dřevěné
+        Skleněné
+Předsíň
+    Věšáky
+    Botníky

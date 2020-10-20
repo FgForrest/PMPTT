@@ -1,0 +1,22 @@
+Jídelna
+    Barové židle
+    Stoly
+Kancelář
+    Kancelářské kontejnery
+    Kancelářské stoly
+Dlažební kostky
+    Papírové
+    Měděné
+        Prosté
+        S vyřezáváním
+    Žulové
+Ložnice
+    Komody
+    Noční stolky
+Obývací pokoj
+    Komody a regály
+    Krátké
+    Konferenční stoly
+Předsíň
+    Věšáky
+    Botníky

@@ -1,0 +1,19 @@
+Jídelna
+    Barové židle
+    Stoly
+        Dvounohé
+        Třínohé
+        Čtyřnohé
+    Židle
+Kancelář
+    Kancelářské kontejnery
+    Kancelářské stoly
+Ložnice
+    Komody
+    Noční stolky
+Obývací pokoj
+    Komody a regály
+    Konferenční stoly
+Předsíň
+    Věšáky
+    Botníky
