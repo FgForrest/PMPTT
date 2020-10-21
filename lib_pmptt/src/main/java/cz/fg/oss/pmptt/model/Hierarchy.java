@@ -2,6 +2,7 @@ package cz.fg.oss.pmptt.model;
 
 import cz.fg.oss.pmptt.dao.HierarchyStorage;
 import cz.fg.oss.pmptt.exception.MaxLevelExceeded;
+import cz.fg.oss.pmptt.exception.NumericTypeExceeded;
 import cz.fg.oss.pmptt.exception.PivotHierarchyNodeNotFound;
 import cz.fg.oss.pmptt.exception.SectionExhausted;
 import cz.fg.oss.pmptt.util.Assert;
@@ -113,6 +114,18 @@ public class Hierarchy {
 	 * Storage implementation.
 	 */
 	@Setter private HierarchyStorage storage;
+
+	public Hierarchy(String code, short levels, short sectionSize) {
+		this.code = code;
+		this.levels = (short)(levels + 1);
+		this.sectionSize = (short)(sectionSize + 1);
+		// check long overflow for first level
+		try {
+			Section.getSectionSizeForLevel(this.sectionSize, (short) 1, this.levels);
+		} catch (ArithmeticException ex) {
+			throw new NumericTypeExceeded(this.levels, this.sectionSize);
+		}
+	}
 
 	/**
 	 * Creates new item on the root level of the hierarchy and places it as last item of the root level.
@@ -314,12 +327,7 @@ public class Hierarchy {
 	public void moveItemBetweenLevelsFirst(@NonNull String externalId) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 
-		moveItemBetweenLevels(movedItem, null, new PositioningLogic() {
-			@Override
-			public void positionItem(HierarchyItem movedItem, List<HierarchyItem> neighbours) {
-				insertIntoNeighboursFirst(movedItem, neighbours);
-			}
-		});
+		moveItemBetweenLevels(movedItem, null, this::insertIntoNeighboursFirst);
 	}
 
 	/**
@@ -333,12 +341,7 @@ public class Hierarchy {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as new parent");
 
-		moveItemBetweenLevels(movedItem, parentItem, new PositioningLogic() {
-			@Override
-			public void positionItem(HierarchyItem movedItem, List<HierarchyItem> neighbours) {
-				insertIntoNeighboursFirst(movedItem, neighbours);
-			}
-		});
+		moveItemBetweenLevels(movedItem, parentItem, this::insertIntoNeighboursFirst);
 	}
 
 	/**
@@ -352,12 +355,7 @@ public class Hierarchy {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as new parent");
 
-		moveItemBetweenLevels(movedItem, parentItem, new PositioningLogic() {
-			@Override
-			public void positionItem(HierarchyItem movedItem, List<HierarchyItem> neighbours) {
-				insertIntoNeighboursLast(movedItem, neighbours);
-			}
-		});
+		moveItemBetweenLevels(movedItem, parentItem, this::insertIntoNeighboursLast);
 	}
 
 	/**
@@ -369,12 +367,7 @@ public class Hierarchy {
 	public void moveItemBetweenLevelsLast(@NonNull String externalId) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 
-		moveItemBetweenLevels(movedItem, null, new PositioningLogic() {
-			@Override
-			public void positionItem(HierarchyItem movedItem, List<HierarchyItem> neighbours) {
-				insertIntoNeighboursLast(movedItem, neighbours);
-			}
-		});
+		moveItemBetweenLevels(movedItem, null, this::insertIntoNeighboursLast);
 	}
 
 	/**

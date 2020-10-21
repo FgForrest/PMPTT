@@ -2,6 +2,7 @@ package cz.fg.oss.pmptt.model;
 
 import cz.fg.oss.pmptt.dao.HierarchyStorage;
 import cz.fg.oss.pmptt.dao.memory.MemoryStorage;
+import cz.fg.oss.pmptt.exception.NumericTypeExceeded;
 import cz.fg.oss.pmptt.exception.SectionExhausted;
 import cz.fg.oss.pmptt.spi.HierarchyChangeListener;
 import cz.fg.oss.pmptt.util.StructureLoader;
@@ -40,12 +41,22 @@ public abstract class AbstractHierarchyTest {
 
 	@BeforeEach
 	public void setUp() {
-		tested = new Hierarchy("test", (short)5, (short)10);
+		tested = new Hierarchy("test", (short)4, (short)9);
 		final HierarchyStorage hierarchyStorage = this.hierarchyStorage == null ? new MemoryStorage() : this.hierarchyStorage;
 		tested.setStorage(hierarchyStorage);
 		hierarchyStorage.createHierarchy(tested);
 		hierarchyStorage.registerChangeListener(puppetListener);
 		puppetListener.clear();
+	}
+
+	@Test
+	void shouldFailToCreateHierarchyExceedingLong() {
+		try {
+			new Hierarchy("test", (short) 55, (short) 50);
+		} catch (NumericTypeExceeded ex) {
+			assertEquals(10, ex.getMaxLevels());
+			assertEquals(50, ex.getSectionSize());
+		}
 	}
 
 	@Test
@@ -72,17 +83,23 @@ public abstract class AbstractHierarchyTest {
 
 	@Test
 	public void shouldAddAllItemsOnSameLevel() {
-		assertThrows(SectionExhausted.class, () -> {
-			for (int i = 0; i < 11; i++) {
-				tested.createRootItem(String.valueOf(i));
-			}
-		});
+		for (int i = 0; i < 9; i++) {
+			tested.createRootItem(String.valueOf(i));
+		}
+	}
+
+	@Test
+	public void shouldAddItemsOnAllLevels() {
+		HierarchyItem parentItem = tested.createRootItem(String.valueOf(0));
+		for (int i = 1; i < 4; i++) {
+			parentItem = tested.createItem(String.valueOf(i), parentItem.getCode());
+		}
 	}
 
 	@Test
 	public void shouldFailTooAddToManyItemsOnSameLevel() {
 		assertThrows(SectionExhausted.class, () -> {
-			for (int i = 0; i < 11; i++) {
+			for (int i = 0; i < 10; i++) {
 				tested.createRootItem(String.valueOf(i));
 			}
 		});

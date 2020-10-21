@@ -23,11 +23,12 @@ public class Section {
 	 * @param level
 	 * @param maxLevels
 	 * @return
+	 * @throws ArithmeticException when span exceeds limits of long type
 	 */
 	public static long getSectionSizeForLevel(short sectionSize, short level, short maxLevels) {
 		long spanSize = 0;
 		// bottom level introduced first unused space that is square of section size - one section + 2 (external sides)
-		long lastSpan = sectionSize * sectionSize + 2 - sectionSize;
+		long lastSpan = Math.addExact(Math.multiplyExact((long)sectionSize, (long)sectionSize), (long)2) - sectionSize;
 		// bottom level unused space is not used for bottom level
 		for (int i = 0; i < (maxLevels - level); i++) {
 			if (i == 0) {
@@ -35,13 +36,13 @@ public class Section {
 				spanSize = lastSpan;
 			} else {
 				// additional levels multiply firstly introduced unused space by section size and sum
-				final long newSpan = lastSpan * sectionSize;
-				spanSize += newSpan;
+				final long newSpan = Math.multiplyExact((long)lastSpan, (long)sectionSize);
+				spanSize = Math.addExact(spanSize, newSpan);
 				lastSpan = newSpan;
 			}
 		}
 		// result space on desired level is section size + reverse factorial of unused space
-		return sectionSize + spanSize;
+		return Math.addExact((long)sectionSize, (long)spanSize);
 	}
 
 	/**
