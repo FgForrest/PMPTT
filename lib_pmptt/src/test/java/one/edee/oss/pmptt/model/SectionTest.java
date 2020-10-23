@@ -40,12 +40,12 @@ public class SectionTest {
 
 	@Test
 	public void shouldComputeHierarchyBounds() {
-		Assertions.assertEquals(new Section(1L, 126L), Section.computeHierarchyBounds((short)2, (short)6));
-		Assertions.assertEquals(new Section(1L, 62L), Section.computeHierarchyBounds((short)2, (short)5));
-		Assertions.assertEquals(new Section(1L, 30L), Section.computeHierarchyBounds((short)2, (short)4));
-		Assertions.assertEquals(new Section(1L, 14L), Section.computeHierarchyBounds((short)2, (short)3));
-		Assertions.assertEquals(new Section(1L, 6L), Section.computeHierarchyBounds((short)2, (short)2));
-		Assertions.assertEquals(new Section(1L, 2L), Section.computeHierarchyBounds((short)2, (short)1));
+		Assertions.assertEquals(new Section(1L, 126L), Section.computeRootHierarchyBounds((short)2, (short)6));
+		Assertions.assertEquals(new Section(1L, 62L), Section.computeRootHierarchyBounds((short)2, (short)5));
+		Assertions.assertEquals(new Section(1L, 30L), Section.computeRootHierarchyBounds((short)2, (short)4));
+		Assertions.assertEquals(new Section(1L, 14L), Section.computeRootHierarchyBounds((short)2, (short)3));
+		Assertions.assertEquals(new Section(1L, 6L), Section.computeRootHierarchyBounds((short)2, (short)2));
+		Assertions.assertEquals(new Section(1L, 2L), Section.computeRootHierarchyBounds((short)2, (short)1));
 	}
 
 	@Test
@@ -158,9 +158,9 @@ public class SectionTest {
 			}
 			bounds.add(item.section.getLeftBound());
 			bounds.add(item.section.getRightBound());
-			long spanSize = item.getSubItems().get(0).getSection().getSpanSize();
+			long spanSize = item.getSubItems().get(0).getSection().getBoundSpan();
 			for (Item subItem : item.getSubItems()) {
-				assertEquals(spanSize, subItem.getSection().getSpanSize());
+				assertEquals(spanSize, subItem.getSection().getBoundSpan());
 				verifyRules(subItem, bounds, levelBounds, item.section, level + 1, sectionSize);
 			}
 		} else {
@@ -181,7 +181,7 @@ public class SectionTest {
 			printTree(subItem, output, sectionSize, level + 1, maxLevels);
 		}
 		final String existingValue = output.get(level);
-		output.put(level, (existingValue == null ? "span size " + (item.getSection().getSpanSize()) + " vs. " + Section.getSectionSizeForLevel(sectionSize, (short)level, maxLevels) + ">>" : existingValue) + item.getSection().getLeftBound() + "-" + item.getSection().getRightBound() + "|");
+		output.put(level, (existingValue == null ? "span size " + (item.getSection().getBoundSpan()) + " vs. " + Section.getSectionSizeForLevel(sectionSize, (short)level, maxLevels) + ">>" : existingValue) + item.getSection().getLeftBound() + "-" + item.getSection().getRightBound() + "|");
 	}
 
 	private Item computeTreeLevel(Section section, short sectionSize, short level, short maxLevels, short order) {

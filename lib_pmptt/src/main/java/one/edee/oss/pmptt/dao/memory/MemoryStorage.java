@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Memory implementation of the PMPTT storage. Used only in tests as data are not persistent in any way.
@@ -27,8 +29,8 @@ import java.util.Objects;
  * @author Jan Novotný (novotny@fg.cz), FG Forrest a.s. (c) 2019
  */
 public class MemoryStorage implements HierarchyStorage {
-	private final List<HierarchyChangeListener> changeListeners = new LinkedList<>();
-	private final Map<String, HierarchyWithContents> hierarchyIndex = new HashMap<>();
+	private final List<HierarchyChangeListener> changeListeners = new CopyOnWriteArrayList<>();
+	private final Map<String, HierarchyWithContents> hierarchyIndex = new ConcurrentHashMap<>();
 
 	@Override
 	public void registerChangeListener(HierarchyChangeListener listener) {
@@ -195,7 +197,7 @@ public class MemoryStorage implements HierarchyStorage {
 
 		HierarchyWithContents(Hierarchy hierarchy) {
 			this.hierarchy = hierarchy;
-			final Section rootSection = Section.computeRootHierarchyBounds(hierarchy.getSectionSize(), hierarchy.getLevels());
+			final Section rootSection = Section.computeEntireHierarchyBounds(hierarchy.getSectionSize(), hierarchy.getLevels());
 			final HierarchyItem rootItem = new HierarchyItemWithHistory(hierarchy.getCode(), ROOT_LEVEL, (short) 0, rootSection.getLeftBound(), rootSection.getRightBound(), (short) 1);
 			this.levels.put(ROOT_LEVEL, new HierarchyLevel(rootItem));
 		}

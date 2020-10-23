@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 @Data
 public class Bounds implements Serializable, Comparable<Bounds> {
+	private static final long serialVersionUID = 8206800425091457080L;
 	private final long left;
 	private final long right;
 

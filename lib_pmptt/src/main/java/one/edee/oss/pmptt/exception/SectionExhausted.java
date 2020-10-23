@@ -1,15 +1,20 @@
 package one.edee.oss.pmptt.exception;
 
+import lombok.Getter;
+
 /**
- * No extra information provided - see (selfexplanatory) method signatures.
- * I have the best intention to write more detailed documentation but if you see this, there was not enough time or will to do so.
+ * Exception is thrown when there is attempt to create item in the hierarchy in the section that already has all
+ * pre-allocated buckets full. Ie. when node is filled up to the maximum count of the child nodes.
  *
  * @author Jan Novotný (novotny@fg.cz), FG Forrest a.s. (c) 2019
  */
 public class SectionExhausted extends IllegalArgumentException {
+	private static final long serialVersionUID = 5241359088446010200L;
+	@Getter private final short sectionSize;
 
-	public SectionExhausted(String s) {
-		super(s);
+	public SectionExhausted(String message, short sectionSize) {
+		super(message);
+		this.sectionSize = sectionSize;
 	}
 
 }

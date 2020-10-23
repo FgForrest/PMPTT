@@ -3,8 +3,9 @@ package one.edee.oss.pmptt.model;
 import lombok.Getter;
 
 /**
- * No extra information provided - see (selfexplanatory) method signatures.
- * I have the best intention to write more detailed documentation but if you see this, there was not enough time or will to do so.
+ * Special form of the item, that holds information about previous form of the item before it has been updated.
+ * This information is precious in cases when node is moved in the hierarchy and we want to know its previous and current
+ * location in order to execute updates in external systems.
  *
  * @author Jan Novotný (novotny@fg.cz), FG Forrest a.s. (c) 2019
  */
