@@ -7,15 +7,26 @@
 	<name>Pre-allocated Modified Preorder Tree Traversal</name>
 
 	<modules>
-		<module>lib_pmptt</module>
-		<module>lib_pmptt_rdbms</module>
+		<module>pmptt_core</module>
+		<module>pmptt_rdbms</module>
+		<module>pmptt_tests</module>
 	</modules>
+
+	<developers>
+		<developer>
+			<id>JNO</id>
+			<email>novotny@fg.cz</email>
+			<name>Jan Novotný</name>
+			<url>http://blog.novoj.net</url>
+			<organization>FG Forrest, a.s.</organization>
+			<organizationUrl>http://www.fg.cz</organizationUrl>
+		</developer>
+	</developers>
 
 	<scm>
 		<connection>scm:git:ssh://git@gitlab.fg.cz:hv/PMPTT</connection>
 		<developerConnection>scm:git:ssh://git@gitlab.fg.cz:hv/PMPTT</developerConnection>
 		<url>https://edee.dev/</url>
-		<tag>HEAD</tag>
 	</scm>
 
 	<organization>
@@ -30,6 +41,12 @@
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.2</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
