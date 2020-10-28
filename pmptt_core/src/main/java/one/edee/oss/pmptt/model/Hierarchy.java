@@ -209,6 +209,7 @@ public class Hierarchy {
 	 *
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 * @param withParent code of the other item in the hierarchy that would become parent item of the newly created item
+	 * @param before code of the sibling item that would follow newly created item code of another root item, might be null and then the new item is placed as the last item
 	 * @return created hierarchy item
 	 * @throws PivotHierarchyNodeNotFound if before is not found in entire hierarchy
 	 * @throws SectionExhausted if there is no room for another item in the section

@@ -17,7 +17,7 @@ public class Section {
 	/**
 	 * Hard invented algorithm that computes tree section size on any of the tree level in such way, that section fully
 	 * envelopes sections subtree and don't share outer bounds with first and last sub item. For visualisation see
-	 * {@link com.fg.oss.pmptt.model.SectionTest#testTreeComputation()} test.
+	 * SectionTest#testTreeComputation() test.
 	 *
 	 * @param sectionSize maximal number of nodes in the section
 	 * @param level for which section size is computed
