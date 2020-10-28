@@ -5,12 +5,29 @@
 	<packaging>pom</packaging>
 	<version>0.0.2-SNAPSHOT</version>
 	<name>Pre-allocated Modified Preorder Tree Traversal</name>
+	<url>https://github.com/FgForrest/PMPTT/</url>
+	<description>
+		Library encapsulates a special flavour of MPTT algorithm with predictable bound computation logic,
+		that allows to minimize write overhead that is otherwise closely connected to standard MPTT algorithm.
+
+		MPTT flattens hierarchical structure to flat structure with bounds that allow quick filtering children
+		or parent nodes when required.
+	</description>
 
 	<modules>
 		<module>pmptt_core</module>
 		<!--<module>pmptt_rdbms</module>
 		<module>pmptt_tests</module>-->
 	</modules>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://github.com/FgForrest/PMPTT/blob/master/LICENSE.md</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
 
 	<developers>
 		<developer>
