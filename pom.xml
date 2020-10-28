@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>one.edee.oss</groupId>
 	<artifactId>pmptt</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>Pre-allocated Modified Preorder Tree Traversal</name>
 
 	<modules>
@@ -40,7 +39,8 @@
 		<connection>scm:git:ssh://git@github.com:FgForrest/PMPTT</connection>
 		<developerConnection>scm:git:ssh://git@github.com:FgForrest/PMPTT</developerConnection>
 		<url>https://edee.dev/</url>
-	</scm>
+	  <tag>pmptt-0.0.1</tag>
+  </scm>
 
 	<organization>
 		<name>FG Forrest, a.s.</name>
