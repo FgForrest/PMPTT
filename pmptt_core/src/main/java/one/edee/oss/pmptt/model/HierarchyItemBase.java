@@ -27,11 +27,11 @@ public class HierarchyItemBase implements HierarchyItem {
 	 */
 	private Short level;
 	/**
-	 * Left bound of the item {@link Section}. All child nodes have its leftBound >= parent.leftBound.
+	 * Left bound of the item {@link Section}. All child nodes have its leftBound &gt;= parent.leftBound.
 	 */
 	private Long leftBound;
 	/**
-	 * Right bound of the item {@link Section}. All child nodes have its rightBound <= parent.rightBound.
+	 * Right bound of the item {@link Section}. All child nodes have its rightBound &lt;= parent.rightBound.
 	 */
 	private Long rightBound;
 	/**
