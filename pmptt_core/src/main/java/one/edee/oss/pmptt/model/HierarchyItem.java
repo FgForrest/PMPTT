@@ -29,7 +29,7 @@ public interface HierarchyItem {
 	void setLevel(Short level);
 
 	/**
-	 * Left bound of the item {@link Section}. All child nodes have its leftBound >= parent.leftBound.
+	 * Left bound of the item {@link Section}. All child nodes have its leftBound &gt;= parent.leftBound.
 	 *
 	 * @return left bound of the item
 	 */
@@ -37,7 +37,7 @@ public interface HierarchyItem {
 	void setLeftBound(Long leftBound);
 
 	/**
-	 * Right bound of the item {@link Section}. All child nodes have its rightBound <= parent.rightBound.
+	 * Right bound of the item {@link Section}. All child nodes have its rightBound &lt;= parent.rightBound.
 	 * @return right bound of the item
 	 */
 	Long getRightBound();
