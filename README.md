@@ -1,162 +1,74 @@
 # Pre-allocated Modified Preorder Tree Traversal
 
-MPTT it quite old and very clever way for transposing hierarchical - tree structure to a two-dimensional representation
-that is suitable for relational databases. MPTT allows to translate information about node tree position into two numbers - 
-left and right bound. Two number fields can be easily indexed and look ups for records in the tree can take advantage of
-database indexes and perform really quickly.
+[MPTT](https://en.wikipedia.org/wiki/Tree_traversal) approach to tree structures simplifies the evaluation of parent 
+and child relationship to two numbers comparation. One of the [Forrest guys](https://www.fg.cz/cs/forresti/tym/honza-10233)
+has a lecture on this topic at [JavaDays 2020](https://javadays.cz/cs/) conference. Although it is a relatively old 
+algorithm, it has one key disadvantage and that is the high cost of writing a new item or moving it in the structure. 
+These operations typically involve the recalculation of a large part of the tree, and if these boundaries are stored 
+elsewhere due to the greater performance of SQL queries, this disadvantage is further multiplied.
 
-I won't go into details of the (well) documented MPTT algorithm itself, because there are a lot of sources where you can
-go for comprehensible explanation (better than I would be able to provide). If you are not familiar with the algorithm, 
-please, go first and read these articles:
+For this reason, we have come up with a small mutation in this algorithm (called Pre-allocated Modified Preorder Tree 
+Traversal), which, while accepting certain simplifications, allows you to define an equation that determines boundaries 
+for each tree node so that in write operations such as adding, removing or moving a node within the same superior node, 
+which doesn't imply any boundary recalculation requirements at all.
 
-- [Modified Preorder Tree Traversal](https://gist.github.com/tmilos/f2f999b5839e2d42d751)
-- [Modified Preorder Tree Traversal in Django](https://www.caktusgroup.com/blog/2016/01/04/modified-preorder-tree-traversal-django/https://www.caktusgroup.com/blog/2016/01/04/modified-preorder-tree-traversal-django/)
-- [Storing hierarchical data in relational database (Czech version)](https://www.zdrojak.cz/clanky/ukladame-hierarchicka-data-v-databazi-iii/)
+The simplification to be undertaken is to define in advance the maximum number of levels of immersion in the tree, 
+and the maximum number of children per node. At the same time, it is necessary to combine the data type long, which 
+represents about 10 levels of the tree in depth with 55 items in one node.
 
-We're often working with hierarchical data in my [company](https://www.fg.cz) and so we really wanted to have this gear
-implemented as optimally as possible. Original MPTT algorithm has one big drawback and that is costly updates when you move 
-nodes in the tree, insert new and remove old nodes. Simply said - MPTT has heavy writes and light reads.
+The library also greatly simplifies the operations of moving nodes between different levels of the tree (including 
+child nodes), although these operations remain just as write-intensive as in the original algorithm.
 
-In our [e-commerce sollution](https://www.edee.one/) we work with loads of data that are accessed primarily in a hierarchical
-fashion. When you browse your online store you usually want to see a collection of products in certain category and all its
-sub categories. Even if it seems as a simple operation it might translate to really complex query that might target millions
-of records in the database. Wholesalers have complex price policies and can have dozens of different prices for single item,
-dozens attributes that describe the item, dozens of product shapes and looks and cartesian product might grow to tens
-of millions of records. So you really want use any filtering constraint that would keep the combination count at sane levels. Using
-MPTT bounds seems to be a good way to go, because that's the way user looks at the data.
+Implications of the PMPTT agorithms are summarized in this [presentation](http://bit.ly/javadays2020).
 
-To be able to take advantage of the numeric (left/right bound) index we need to copy the bounds not only to all products, but also
-to other records (such as prices) that we want to finally join in a single big cartesian product (even noSQL solution would 
-benefit from indexed MPTT bounds, so there is no need to think about MPTT only in connection with relational database).
-If we would be content with original MPTT it would lead to regular update of thousands of records in case of simple write
-operations with the tree. So we invested some time to come up with some improvements that would tackle the heavy writes.
+For more information see section [How to use](#how-to-use)
 
-We decided to limit ourselves with a few constraints that would allow us to use much more efficient form of MPTT. Let's
-say that we can constraint ourselves with maximum level count (depth of the tree) and maximum count of children nodes of
-each parent node. That would mean that we'll be able to compute overall numeric interval that would be required to place
-any of the new node in advance.
+## Prerequisites
 
-Also let's keep all these attributes per node:
+- JDK 1.8+
+- Commons Logging (1.2.0+)
 
-**mutable attributes**
-- numberOfChildren (count of intermittent children of the node allow to easily detect leaf nodes)
-- order (allows to sort child nodes in the scope of parent node without necessity to touch left/right bounds)
+**RDBMS version:**
 
-**immutable attributes**
-- level (depth of the node)
-- left (left MPTT bound - as in original algorithm)
-- right (right MPTT bound - as in original algorithm)
+- Spring framework (5.3.0+), works also on 4.3.X older version although not compilable due to JUnit tests
 
-Immutable properties are assigned at the moment of the node creation and must not be changed afterwards. As you can see
-left and right bound are among them and that's crucial for our indexed data that are counted in millions.
+## Supported databases
 
-We can say that if we prepare the tree for 10 levels and 55 children per node we would need 55^11 number interval to
-cover the top level nodes (and that's slightly lower than 2^64 that often represents big integers in database engines).
-But let's use more comprehensible numbers as examples - if we are content with 3 levels and 2 children per node, we'd
-need only span of 0 - 16. Tree leveling would look like this:
+- MySQL
+- Oracle
 
-- 0 -  7
-  - 0 - 3
-    - 0 - 1
-    - 2 - 3
-  - 4 - 7
-    - 4 - 5
-    - 6 - 7
-- 8 - 15
-  - 8 - 11
-    - 8 - 9
-    - 10 - 11
-  - 12 - 15
-    - 12 - 13
-    - 14 - 15
-    
-Look at this tree as a honeycomb that is empty at the beginning and will gradually fill up as we add the contents.
-Let's go through all necessary operations one by one:
+Do you missing one? Fill a pull request!
 
-## Read operations
+## How to compile
 
-### Retrieve all children of the node
+Use standard Maven 3 command:
 
-``` sql
-select * from MPTT where left >= node.left and right <= node.right
+```
+mvn clean install
 ```
 
-### Retrieve all children of the node in the next Y levels
+## How to run tests
 
-``` sql
-select * from MPTT where left >= node.left and right <= node.right and level >= node.level and level <= node.level + Y
+Start databases:
+
+```
+docker-compose -f docker/docker-compose.yml up 
 ```
 
-### Retrieve all parents of the node
+Run your tests in IDE or run:
 
-``` sql
-select * from MPTT where left <= node.left and right => node.right
+```
+mvn clean test
 ```
 
-### Retrieve all parents of the node in the upper Y levels
-``` sql
-select * from MPTT where left <= node.left and right => node.right and level >= node.level and level <= node.level + Y
-```
+Help us maintain at least 80% code coverage!
 
-### Retrieve all leaf nodes of the parent node
+## How to use
 
-``` sql
-select * from MPTT a where left <= node.left and right => node.right and node.numberOfChildren = 0
-```
+See separate chapters for details:
 
-### Construct entire tree
-
-- retrieve all nodes
-- group them by level
-- group them by parent node
-- sort all by order ascending
-- print in recurse fashion nodes and for each node get nodes of the next level where left >= node.left and right <= node.right
-
-## Write operations
-
-### Add new node
-
-- find parent node
-- compute / read number interval of the parent node
-- find first unoccupied slot in it and assign it to the new node (ie. assign left + right bound)
-- set numberOfChildren of the new node to zero
-- set level of the new node to parent.level plus one
-- increase numberOfChildren of the parent by one
-- set the order of the new node to parent.numberOfChildren
-
-### Remove node
-
-- find the node
-- remove all nodes that has node.leftBound >= removedNode.leftBound and node.rightBound <= removedNode.rightBound
-- find all nodes that has node.leftBound > removedNode.leftBound and node.rightBound <= parentNode.rightBound and
-  decrease their order by one
-- decrease numberOfChildren of parent node by one
-
-### Move node from position X to Y on the same level
-
-- find node X
-- find node Y
-- set X.order = Y.order
-- decrease order by one of all nodes where node.leftBound > X.leftBound and node.rightBound <= Y.rightBound and node.level = X.level
-
-### Move node from position X to Y on different levels
-
-- remove node X
-- add node X after Y on different level
-
-### Add new node after X node
-
-- combine operations Add new node
-- and Move node from position X to Y on the same level
-
-## Conclusion
-
-As you can see - by constraining ourselves with limited width and depth of the tree, we're able to significantly reduce
-the complexity of the updates to the tree and still keep all lookup queries really fast. Key attributes - left and right bound can be made
-immutable and never change during life time of the tree. That leads to significant reduction of the complexity of the 
-additional updates of records bound to the products that are attached to the category tree. There is single write operation
-that remains rather costly and that is moving node to different level of the tree, which still requires boundary reassignment.
-
-The main drawback in PMPTT algorithm is the situation when we run out of levels or need to store more children for the
-same parent node than was accounted for in the time of tree creation. Such situations would require complete recomputation
-of the entire tree.
+- [Theory behind](pmptt_core/src/main/resources/META-INF/pmptt/docs/theory.md)
+- [How to integrate to your application](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-integrate.md)
+- [How to create hierarchy](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-create-hierarchy.md)
+- [How to query hierarchy](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-query-hierarchy.md)
+- [How to propagate changes do duplicated data](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-propagate-changes.md)
