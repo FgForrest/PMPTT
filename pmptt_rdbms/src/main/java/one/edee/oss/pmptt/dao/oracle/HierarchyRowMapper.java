@@ -1,9 +1,9 @@
 package one.edee.oss.pmptt.dao.oracle;
 
 import lombok.RequiredArgsConstructor;
+import one.edee.oss.pmptt.dao.DbHierarchyStorage;
 import one.edee.oss.pmptt.model.DbHierarchy;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,15 +16,15 @@ import java.sql.SQLException;
  */
 @RequiredArgsConstructor
 class HierarchyRowMapper implements RowMapper<DbHierarchy> {
-	private final PlatformTransactionManager transactionManager;
+	private final DbHierarchyStorage dbHierarchyStorage;
 
 	@Override
 	public DbHierarchy mapRow(ResultSet resultSet, int i) throws SQLException {
 		return new DbHierarchy(
 				resultSet.getString("code"),
-				resultSet.getShort("levels"),
-				resultSet.getShort("sectionSize"),
-				transactionManager
+				((short)(resultSet.getShort("levels") - 1)),
+				((short)(resultSet.getShort("sectionSize") - 1)),
+				dbHierarchyStorage
 		);
 	}
 

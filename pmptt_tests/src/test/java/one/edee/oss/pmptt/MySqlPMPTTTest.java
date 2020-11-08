@@ -1,11 +1,10 @@
 package one.edee.oss.pmptt;
 
 import one.edee.oss.pmptt.spring.DatabaseLayerConfig;
-import one.edee.oss.pmptt.spring.MySqlDataSource;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * No extra information provided - see (selfexplanatory) method signatures.
@@ -15,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-		classes = {MySqlDataSource.class, DatabaseLayerConfig.class}
+		classes = {DatabaseLayerConfig.class}
 )
-@Transactional
+@ActiveProfiles("MYSQL")
 public class MySqlPMPTTTest extends AbstractPMPTTTest {
 
 }

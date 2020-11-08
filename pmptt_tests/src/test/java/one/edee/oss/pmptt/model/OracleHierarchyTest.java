@@ -1,11 +1,10 @@
 package one.edee.oss.pmptt.model;
 
 import one.edee.oss.pmptt.spring.DatabaseLayerConfig;
-import one.edee.oss.pmptt.spring.OracleSqlDataSource;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * No extra information provided - see (selfexplanatory) method signatures.
@@ -15,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-		classes = {OracleSqlDataSource.class, DatabaseLayerConfig.class}
+		classes = {DatabaseLayerConfig.class}
 )
-@Transactional
+@ActiveProfiles("ORACLE")
 public class OracleHierarchyTest extends AbstractHierarchyTest {
 
 }

@@ -1,5 +1,7 @@
 package one.edee.oss.pmptt.dao.oracle;
 
+import lombok.Getter;
+import one.edee.oss.pmptt.dao.DbHierarchyStorage;
 import one.edee.oss.pmptt.dao.HierarchyStorage;
 import one.edee.oss.pmptt.model.DbHierarchy;
 import one.edee.oss.pmptt.model.Hierarchy;
@@ -24,9 +26,9 @@ import java.util.List;
  *
  * @author Jan Novotný (novotny@fg.cz), FG Forrest a.s. (c) 2019
  */
-public class OracleSqlStorage implements HierarchyStorage {
+public class OracleSqlStorage implements DbHierarchyStorage {
 	private final List<HierarchyChangeListener> changeListeners = new LinkedList<>();
-	private final PlatformTransactionManager transactionManager;
+	@Getter private final PlatformTransactionManager transactionManager;
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public OracleSqlStorage(DataSource dataSource, PlatformTransactionManager transactionManager) {
@@ -52,16 +54,12 @@ public class OracleSqlStorage implements HierarchyStorage {
 	@Override
 	public DbHierarchy getHierarchy(String code) {
 		try {
-			final DbHierarchy hierarchy = namedParameterJdbcTemplate
+			return namedParameterJdbcTemplate
 					.queryForObject(
 							"select * from T_MPTT_HIERARCHY where \"code\" = :code",
 							Collections.singletonMap("code", code),
-							new HierarchyRowMapper(transactionManager)
+							new HierarchyRowMapper(this)
 					);
-			if (hierarchy != null) {
-				hierarchy.setStorage(this);
-			}
-			return hierarchy;
 		} catch (EmptyResultDataAccessException ex) {
 			return null;
 		}

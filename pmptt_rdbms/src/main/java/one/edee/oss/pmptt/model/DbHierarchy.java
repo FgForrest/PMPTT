@@ -1,10 +1,12 @@
 package one.edee.oss.pmptt.model;
 
 import lombok.NonNull;
+import one.edee.oss.pmptt.dao.DbHierarchyStorage;
+import one.edee.oss.pmptt.dao.HierarchyStorage;
 import one.edee.oss.pmptt.exception.MaxLevelExceeded;
 import one.edee.oss.pmptt.exception.PivotHierarchyNodeNotFound;
 import one.edee.oss.pmptt.exception.SectionExhausted;
-import org.springframework.transaction.PlatformTransactionManager;
+import one.edee.oss.pmptt.util.Assert;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -14,13 +16,24 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Jan Novotný (novotny@fg.cz), FG Forrest a.s. (c) 2020
  */
 public class DbHierarchy extends Hierarchy {
-	private final TransactionTemplate txTemplate;
+	private TransactionTemplate txTemplate;
 
-	public DbHierarchy(String code, short levels, short sectionSize, PlatformTransactionManager transactionManager) {
+	public DbHierarchy(String code, short levels, short sectionSize) {
 		super(code, levels, sectionSize);
-		this.txTemplate = new TransactionTemplate(transactionManager);
 	}
-	
+
+	public DbHierarchy(String code, short levels, short sectionSize, DbHierarchyStorage storage) {
+		super(code, levels, sectionSize);
+		setStorage(storage);
+	}
+
+	@Override
+	public void setStorage(HierarchyStorage storage) {
+		super.setStorage(storage);
+		Assert.isTrue(storage instanceof DbHierarchyStorage, "Storage is expected to be of type DbHierarchyStorage.");
+		this.txTemplate = new TransactionTemplate(((DbHierarchyStorage)storage).getTransactionManager());
+	}
+
 	@Override
 	public HierarchyItem createRootItem(@NonNull String externalId) throws SectionExhausted {
 		return txTemplate.execute(transactionStatus -> super.createRootItem(externalId));

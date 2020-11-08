@@ -1,5 +1,7 @@
 package one.edee.oss.pmptt.dao.mysql;
 
+import lombok.Getter;
+import one.edee.oss.pmptt.dao.DbHierarchyStorage;
 import one.edee.oss.pmptt.dao.HierarchyStorage;
 import one.edee.oss.pmptt.model.DbHierarchy;
 import one.edee.oss.pmptt.model.Hierarchy;
@@ -11,6 +13,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
@@ -24,9 +27,9 @@ import java.util.List;
  *
  * @author Jan Novotný (novotny@fg.cz), FG Forrest a.s. (c) 2019
  */
-public class MySqlStorage implements HierarchyStorage {
+public class MySqlStorage implements DbHierarchyStorage {
 	private final List<HierarchyChangeListener> changeListeners = new LinkedList<>();
-	private final PlatformTransactionManager transactionManager;
+	@Getter private final PlatformTransactionManager transactionManager;
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public MySqlStorage(DataSource dataSource, PlatformTransactionManager transactionManager) {
@@ -41,27 +44,27 @@ public class MySqlStorage implements HierarchyStorage {
 
 	@Override
 	public void createHierarchy(Hierarchy hierarchy) {
-		namedParameterJdbcTemplate
-				.update(
-						"insert into T_MPTT_HIERARCHY (code, levels, sectionSize) values (:code, :levels, :sectionSize)",
-						new BeanPropertySqlParameterSource(hierarchy)
-				);
+		final TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
+		txTemplate.execute(transactionStatus -> {
+			namedParameterJdbcTemplate
+					.update(
+							"insert into T_MPTT_HIERARCHY (code, levels, sectionSize) values (:code, :levels, :sectionSize)",
+							new BeanPropertySqlParameterSource(hierarchy)
+					);
+			return null;
+		});
 		hierarchy.setStorage(this);
 	}
 
 	@Override
 	public DbHierarchy getHierarchy(String code) {
 		try {
-			final DbHierarchy hierarchy = namedParameterJdbcTemplate
+			return namedParameterJdbcTemplate
 					.queryForObject(
 							"select * from T_MPTT_HIERARCHY where code = :code",
 							Collections.singletonMap("code", code),
-							new HierarchyRowMapper(transactionManager)
+							new HierarchyRowMapper(this)
 					);
-			if (hierarchy != null) {
-				hierarchy.setStorage(this);
-			}
-			return hierarchy;
 		} catch (EmptyResultDataAccessException ex) {
 			return null;
 		}

@@ -8,12 +8,12 @@ import one.edee.oss.pmptt.exception.SectionExhausted;
 import one.edee.oss.pmptt.spi.HierarchyChangeListener;
 import one.edee.oss.pmptt.util.StructureLoader;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Hierarchy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -33,19 +33,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *
  * @author Jan Novotný (novotny@fg.cz), FG Forrest a.s. (c) 2019
  */
+@Transactional
 public abstract class AbstractHierarchyTest {
 	private static final ClassPathResource TREE_5_2 = new ClassPathResource("META-INF/lib_pmptt/data/structure-5-2.txt");
 	private static final ClassPathResource TREE_5_4 = new ClassPathResource("META-INF/lib_pmptt/data/structure-5-4.txt");
 	private Hierarchy tested;
 	@Autowired(required = false)
 	private HierarchyStorage hierarchyStorage;
-	private PuppetHierarchyChangeListener puppetListener = new PuppetHierarchyChangeListener();
+	private final PuppetHierarchyChangeListener puppetListener = new PuppetHierarchyChangeListener();
 
 	@BeforeEach
 	public void setUp() {
-		tested = new Hierarchy("test", (short)4, (short)9);
-		final HierarchyStorage hierarchyStorage = this.hierarchyStorage == null ? new MemoryStorage() : this.hierarchyStorage;
-		tested.setStorage(hierarchyStorage);
+		if (this.hierarchyStorage == null) {
+			this.hierarchyStorage = new MemoryStorage();
+			tested = new Hierarchy("test", (short)4, (short)9);
+		} else {
+			tested = new DbHierarchy("test", (short)4, (short)9);
+		}
 		hierarchyStorage.createHierarchy(tested);
 		hierarchyStorage.registerChangeListener(puppetListener);
 		puppetListener.clear();
@@ -101,7 +105,7 @@ public abstract class AbstractHierarchyTest {
 	@Test
 	public void shouldFailTooAddToManyItemsOnSameLevel() {
 		assertThrows(SectionExhausted.class, () -> {
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i <= 10; i++) {
 				tested.createRootItem(String.valueOf(i));
 			}
 		});
