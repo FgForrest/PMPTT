@@ -73,4 +73,4 @@ See separate chapters for details:
 - [How to integrate to your application (RDBMS version)](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-integrate-rdbms.md)
 - [How to create hierarchy](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-create-hierarchy.md)
 - [How to query hierarchy](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-query-hierarchy.md)
-- [How to propagate changes do duplicated data](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-propagate-changes.md)
+- [How to propagate changes to a duplicated data](pmptt_core/src/main/resources/META-INF/pmptt/docs/how-to-propagate-changes.md)

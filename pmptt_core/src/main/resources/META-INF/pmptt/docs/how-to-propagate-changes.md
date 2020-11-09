@@ -1,4 +1,4 @@
-# How to propagate duplicated data
+# How to propagate changes to a duplicated data
 
 You can get a performance bonus if you break normalization of the database design and duplicate data about boundaries
 to the tables with high number of rows. You can do it easily this way:
