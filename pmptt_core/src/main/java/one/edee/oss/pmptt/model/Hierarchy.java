@@ -515,9 +515,34 @@ public class Hierarchy {
 		return storage.getParentsOfItem(pivot);
 	}
 
+	/**
+	 * Prints hierarchy as string with each item on single line using indentation to represent a tree.
+	 *
+	 * @param fromParent code of the parent item if only sub-tree should be printed, null when entire tree should be printed
+	 * @param indent number or indentation spaces per level
+	 * @return
+	 */
+	@Nonnull
+	public String printTree(@Nullable String fromParent, int indent) {
+		final StringBuilder sb = new StringBuilder();
+		printTree(fromParent != null ? getItem(fromParent) : null, indent, 0, sb);
+		return sb.toString();
+	}
+
 	/*
 		PRIVATE METHODS
 	 */
+
+	public void printTree(@Nullable HierarchyItem fromParent, int indent, int level, StringBuilder sb) {
+		final List<HierarchyItem> children = fromParent != null ? getChildItems(fromParent.getCode()) : getRootItems();
+		for (HierarchyItem child : children) {
+			for (int i = 0; i < level * indent; i++) {
+				sb.append(" ");
+			}
+			sb.append(child.getCode()).append("\n");
+			printTree(child, indent, level + 1, sb);
+		}
+	}
 
 	private HierarchyItem createRootItemInternal(@Nonnull String externalId) {
 		final SectionWithBucket section = computeBounds();

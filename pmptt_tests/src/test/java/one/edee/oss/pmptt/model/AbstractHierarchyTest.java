@@ -585,6 +585,44 @@ public abstract class AbstractHierarchyTest {
 		assertParents(tested.getParentItems("Jídelna"));
 	}
 
+	@Test
+	public void shouldPrintTree() {
+		StructureLoader.loadHierarchy(TREE_5_4, tested);
+		assertEquals("Jídelna\n" +
+			"   Barové židle\n" +
+			"   Stoly\n" +
+			"      Barové stoly\n" +
+			"      Dřevěné stoly\n" +
+			"      Jidelní sestavy\n" +
+			"   Židle\n" +
+			"      Dřevěné židle\n" +
+			"      Kovové židle\n" +
+			"Kancelář\n" +
+			"   Kancelářské kontejnery\n" +
+			"   Kancelářské stoly\n" +
+			"Ložnice\n" +
+			"   Komody\n" +
+			"   Noční stolky\n" +
+			"   Postele\n" +
+			"      Dřevěné postele\n" +
+			"      Kovové postele\n" +
+			"      Čalouněné postele\n" +
+			"         Rozměr 140x200 cm\n" +
+			"         Rozměr 160x200 cm\n" +
+			"Obývací pokoj\n" +
+			"   Komody a regály\n" +
+			"      Komody obývákové\n" +
+			"      Regály\n" +
+			"   Konferenční stoly\n" +
+			"      Dřevěné\n" +
+			"      Skleněné\n" +
+			"Předsíň\n" +
+			"   Věšáky\n" +
+			"   Botníky\n",
+			tested.printTree(null, 3)
+		);
+	}
+
 	private void assertParents(List<HierarchyItem> parentItems, String... parentCodes) {
 		assertEquals(parentCodes.length, parentItems.size());
 		for (int i = 0; i < parentCodes.length; i++) {
