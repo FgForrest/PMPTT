@@ -15,6 +15,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.HashMap;
@@ -153,6 +155,7 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getParentsOfItem(HierarchyItem pivot) {
 		return namedParameterJdbcTemplate
@@ -168,6 +171,7 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 				);
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getRootItems(String hierarchyCode) {
 		return namedParameterJdbcTemplate
@@ -181,6 +185,7 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 				);
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getChildItems(HierarchyItem parent) {
 		final HashMap<String, Object> params = new HashMap<>();
@@ -201,6 +206,7 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 				);
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getAllChildrenItems(HierarchyItem parent) {
 		return namedParameterJdbcTemplate
@@ -216,6 +222,7 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 				);
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getLeafItems(HierarchyItem parent) {
 		return namedParameterJdbcTemplate
@@ -232,6 +239,7 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 				);
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getLeafItems(String hierarchyCode) {
 		return namedParameterJdbcTemplate
@@ -245,6 +253,7 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 				);
 	}
 
+	@Nullable
 	@Override
 	public SectionWithBucket getFirstEmptySection(String hierarchyCode, long sectionSize, short maxCount) {
 		final HashMap<String, Object> params = new HashMap<>();
@@ -287,6 +296,7 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 		}
 	}
 
+	@Nullable
 	@Override
 	public SectionWithBucket getFirstEmptySection(String hierarchyCode, long sectionSize, short maxCount, HierarchyItem parent) {
 		final HashMap<String, Object> params = new HashMap<>();

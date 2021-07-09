@@ -11,6 +11,8 @@ import one.edee.oss.pmptt.model.SectionWithBucket;
 import one.edee.oss.pmptt.spi.HierarchyChangeListener;
 import one.edee.oss.pmptt.util.Assert;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,42 +97,49 @@ public class MemoryStorage implements HierarchyStorage {
 		return hierarchyWithContents.getParentItem(pivot.getCode());
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getParentsOfItem(HierarchyItem pivot) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(pivot.getHierarchyCode());
 		return hierarchyWithContents.getParentItems(pivot.getCode());
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getRootItems(String hierarchyCode) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(hierarchyCode);
 		return hierarchyWithContents.getRootItems();
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getChildItems(HierarchyItem parent) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(parent.getHierarchyCode());
 		return hierarchyWithContents.getChildItems(parent);
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getAllChildrenItems(HierarchyItem parent) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(parent.getHierarchyCode());
 		return hierarchyWithContents.getAllChildItems(parent);
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getLeafItems(HierarchyItem parent) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(parent.getHierarchyCode());
 		return hierarchyWithContents.getAllLeafItems(parent);
 	}
 
+	@Nonnull
 	@Override
 	public List<HierarchyItem> getLeafItems(String hierarchyCode) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(hierarchyCode);
 		return hierarchyWithContents.getAllLeafItems(null);
 	}
 
+	@Nullable
 	@Override
 	public SectionWithBucket getFirstEmptySection(String hierarchyCode, long sectionSize, short maxCount) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(hierarchyCode);
@@ -139,6 +148,7 @@ public class MemoryStorage implements HierarchyStorage {
 		return getFirstEmptySection(sectionSize, maxCount, rootItemsByLeftBound, initialLeftBound);
 	}
 
+	@Nullable
 	@Override
 	public SectionWithBucket getFirstEmptySection(String hierarchyCode, long sectionSize, short maxCount, HierarchyItem parent) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(hierarchyCode);

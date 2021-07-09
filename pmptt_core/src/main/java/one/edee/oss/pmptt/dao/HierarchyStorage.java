@@ -1,11 +1,11 @@
 package one.edee.oss.pmptt.dao;
 
-import lombok.NonNull;
 import one.edee.oss.pmptt.model.Hierarchy;
 import one.edee.oss.pmptt.model.HierarchyItem;
 import one.edee.oss.pmptt.model.SectionWithBucket;
 import one.edee.oss.pmptt.spi.HierarchyChangeListener;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -83,7 +83,7 @@ public interface HierarchyStorage {
 	 * @param pivot item whose parent is looked up for
 	 * @return immediate parent of the item or NULL if item is root item
 	 */
-	@javax.annotation.Nullable
+	@Nullable
 	HierarchyItem getParentItem(HierarchyItem pivot);
 
 	/**
@@ -92,7 +92,7 @@ public interface HierarchyStorage {
 	 * @param pivot item whose parents is looked up for
 	 * @return all parents of the item or empty collection
 	 */
-	@NonNull
+	@Nonnull
 	List<HierarchyItem> getParentsOfItem(HierarchyItem pivot);
 
 	/**
@@ -101,7 +101,7 @@ public interface HierarchyStorage {
 	 * @param hierarchyCode code of the hierarchy to look up
 	 * @return all root items of the hierarchy or empty collection
 	 */
-	@NonNull
+	@Nonnull
 	List<HierarchyItem> getRootItems(String hierarchyCode);
 
 	/**
@@ -110,7 +110,7 @@ public interface HierarchyStorage {
 	 * @param parent item which children should be returned
 	 * @return collection of immediate child items of the parent item in the argument or empty collection
 	 */
-	@NonNull
+	@Nonnull
 	List<HierarchyItem> getChildItems(HierarchyItem parent);
 
 	/**
@@ -119,7 +119,7 @@ public interface HierarchyStorage {
 	 * @param parent item which children should be returned
 	 * @return collection of all child items of the parent item in the argument or empty collection
 	 */
-	@NonNull
+	@Nonnull
 	List<HierarchyItem> getAllChildrenItems(HierarchyItem parent);
 
 	/**
@@ -129,7 +129,7 @@ public interface HierarchyStorage {
 	 * @param parent item which children should be returned
 	 * @return collection of all child items that have no children of the parent item in the argument or empty collection
 	 */
-	@NonNull
+	@Nonnull
 	List<HierarchyItem> getLeafItems(HierarchyItem parent);
 
 	/**
@@ -138,7 +138,7 @@ public interface HierarchyStorage {
 	 * @param hierarchyCode code of the hierarchy to look up for
 	 * @return collection of all child items that have no children of the hierarchy in the argument or empty collection
 	 */
-	@NonNull
+	@Nonnull
 	List<HierarchyItem> getLeafItems(String hierarchyCode);
 
 	/**
@@ -150,7 +150,7 @@ public interface HierarchyStorage {
 	 * @param maxCount size of the section (number of nodes in the section)
 	 * @return information about first empty bucket in the section
 	 */
-	@NonNull
+	@Nullable
 	SectionWithBucket getFirstEmptySection(String hierarchyCode, long sectionSize, short maxCount);
 
 	/**
@@ -163,6 +163,7 @@ public interface HierarchyStorage {
 	 * @param parent item that will become the parent of the section bucket
 	 * @return information about first empty bucket in the section
 	 */
+	@Nullable
 	SectionWithBucket getFirstEmptySection(String hierarchyCode, long sectionSize, short maxCount, HierarchyItem parent);
 
 }

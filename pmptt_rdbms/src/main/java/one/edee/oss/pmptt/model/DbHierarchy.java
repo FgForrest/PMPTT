@@ -1,6 +1,5 @@
 package one.edee.oss.pmptt.model;
 
-import lombok.NonNull;
 import one.edee.oss.pmptt.dao.DbHierarchyStorage;
 import one.edee.oss.pmptt.dao.HierarchyStorage;
 import one.edee.oss.pmptt.exception.MaxLevelExceeded;
@@ -9,9 +8,10 @@ import one.edee.oss.pmptt.exception.SectionExhausted;
 import one.edee.oss.pmptt.util.Assert;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Nonnull;
+
 /**
- * No extra information provided - see (selfexplanatory) method signatures.
- * I have the best intention to write more detailed documentation but if you see this, there was not enough time or will to do so.
+ * This implementation stores the hierarchy into the relational database.
  *
  * @author Jan Novotný (novotny@fg.cz), FG Forrest a.s. (c) 2020
  */
@@ -34,28 +34,32 @@ public class DbHierarchy extends Hierarchy {
 		this.txTemplate = new TransactionTemplate(((DbHierarchyStorage)storage).getTransactionManager());
 	}
 
+	@Nonnull
 	@Override
-	public HierarchyItem createRootItem(@NonNull String externalId) throws SectionExhausted {
+	public HierarchyItem createRootItem(@Nonnull String externalId) throws SectionExhausted {
 		return txTemplate.execute(transactionStatus -> super.createRootItem(externalId));
 	}
 
+	@Nonnull
 	@Override
-	public HierarchyItem createRootItem(@NonNull String externalId, String before) throws PivotHierarchyNodeNotFound, SectionExhausted {
+	public HierarchyItem createRootItem(@Nonnull String externalId, String before) throws PivotHierarchyNodeNotFound, SectionExhausted {
 		return txTemplate.execute(transactionStatus -> super.createRootItem(externalId, before));
 	}
 
+	@Nonnull
 	@Override
-	public HierarchyItem createItem(@NonNull String externalId, @NonNull String withParent) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
+	public HierarchyItem createItem(@Nonnull String externalId, @Nonnull String withParent) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
 		return txTemplate.execute(transactionStatus -> super.createItem(externalId, withParent));
 	}
-	
+
+	@Nonnull
 	@Override
-	public HierarchyItem createItem(@NonNull String externalId, @NonNull String withParent, String before) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
+	public HierarchyItem createItem(@Nonnull String externalId, @Nonnull String withParent, String before) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
 		return txTemplate.execute(transactionStatus -> super.createItem(externalId, withParent, before));
 	}
 
 	@Override
-	public void removeItem(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	public void removeItem(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		txTemplate.execute(transactionStatus -> {
 			super.removeItem(externalId);
 			return null;
@@ -63,7 +67,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 	
 	@Override
-	public void moveItemBetweenLevelsBefore(@NonNull String externalId, @NonNull String withParent, @NonNull String before) {
+	public void moveItemBetweenLevelsBefore(@Nonnull String externalId, @Nonnull String withParent, @Nonnull String before) {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBetweenLevelsBefore(externalId, withParent, before);
 			return null;
@@ -71,7 +75,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 	
 	@Override
-	public void moveItemBetweenLevelsBefore(@NonNull String externalId, @NonNull String before) {
+	public void moveItemBetweenLevelsBefore(@Nonnull String externalId, @Nonnull String before) {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBetweenLevelsBefore(externalId, before);
 			return null;
@@ -79,7 +83,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 
 	@Override
-	public void moveItemBetweenLevelsAfter(@NonNull String externalId, @NonNull String withParent, @NonNull String after) {
+	public void moveItemBetweenLevelsAfter(@Nonnull String externalId, @Nonnull String withParent, @Nonnull String after) {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBetweenLevelsAfter(externalId, withParent, after);
 			return null;
@@ -87,7 +91,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 
 	@Override
-	public void moveItemBetweenLevelsAfter(@NonNull String externalId, @NonNull String after) {
+	public void moveItemBetweenLevelsAfter(@Nonnull String externalId, @Nonnull String after) {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBetweenLevelsAfter(externalId, after);
 			return null;
@@ -95,7 +99,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 
 	@Override
-	public void moveItemBetweenLevelsFirst(@NonNull String externalId) {
+	public void moveItemBetweenLevelsFirst(@Nonnull String externalId) {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBetweenLevelsFirst(externalId);
 			return null;
@@ -103,7 +107,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 
 	@Override
-	public void moveItemBetweenLevelsFirst(@NonNull String externalId, @NonNull String withParent) {
+	public void moveItemBetweenLevelsFirst(@Nonnull String externalId, @Nonnull String withParent) {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBetweenLevelsFirst(externalId, withParent);
 			return null;
@@ -111,7 +115,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 	
 	@Override
-	public void moveItemBetweenLevelsLast(@NonNull String externalId, @NonNull String withParent) {
+	public void moveItemBetweenLevelsLast(@Nonnull String externalId, @Nonnull String withParent) {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBetweenLevelsLast(externalId, withParent);
 			return null;
@@ -119,7 +123,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 	
 	@Override
-	public void moveItemBetweenLevelsLast(@NonNull String externalId) {
+	public void moveItemBetweenLevelsLast(@Nonnull String externalId) {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBetweenLevelsLast(externalId);
 			return null;
@@ -127,7 +131,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 
 	@Override
-	public void moveItemBefore(@NonNull String externalId, @NonNull String before) throws PivotHierarchyNodeNotFound {
+	public void moveItemBefore(@Nonnull String externalId, @Nonnull String before) throws PivotHierarchyNodeNotFound {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemBefore(externalId, before);
 			return null;
@@ -135,7 +139,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 	
 	@Override
-	public void moveItemAfter(@NonNull String externalId, @NonNull String after) throws PivotHierarchyNodeNotFound {
+	public void moveItemAfter(@Nonnull String externalId, @Nonnull String after) throws PivotHierarchyNodeNotFound {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemAfter(externalId, after);
 			return null;
@@ -143,7 +147,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 	
 	@Override
-	public void moveItemToFirst(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	public void moveItemToFirst(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemToFirst(externalId);
 			return null;
@@ -151,7 +155,7 @@ public class DbHierarchy extends Hierarchy {
 	}
 	
 	@Override
-	public void moveItemToLast(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	public void moveItemToLast(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		txTemplate.execute(transactionStatus -> {
 			super.moveItemToLast(externalId);
 			return null;

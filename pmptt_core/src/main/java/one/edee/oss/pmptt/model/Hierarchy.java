@@ -1,7 +1,6 @@
 package one.edee.oss.pmptt.model;
 
 import lombok.Data;
-import lombok.NonNull;
 import lombok.Setter;
 import one.edee.oss.pmptt.dao.HierarchyStorage;
 import one.edee.oss.pmptt.exception.MaxLevelExceeded;
@@ -10,6 +9,7 @@ import one.edee.oss.pmptt.exception.PivotHierarchyNodeNotFound;
 import one.edee.oss.pmptt.exception.SectionExhausted;
 import one.edee.oss.pmptt.util.Assert;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,8 +143,8 @@ public class Hierarchy {
 	 * @return created hierarchy item
 	 * @throws SectionExhausted if there is no room for another item in the section
 	 */
-	@NonNull
-	public HierarchyItem createRootItem(@NonNull String externalId) throws SectionExhausted {
+	@Nonnull
+	public HierarchyItem createRootItem(@Nonnull String externalId) throws SectionExhausted {
 		final HierarchyItem newItem = createRootItemInternal(externalId);
 		newItem.setOrder((short)(storage.getRootItems(code).size() + 1));
 		storage.createItem(newItem, null);
@@ -160,8 +160,8 @@ public class Hierarchy {
 	 * @throws PivotHierarchyNodeNotFound if beforeItem is not found in entire hierarchy
 	 * @throws SectionExhausted if there is no room for another item in the section
 	 */
-	@NonNull
-	public HierarchyItem createRootItem(@NonNull String externalId, String before) throws PivotHierarchyNodeNotFound, SectionExhausted {
+	@Nonnull
+	public HierarchyItem createRootItem(@Nonnull String externalId, String before) throws PivotHierarchyNodeNotFound, SectionExhausted {
 		final HierarchyItem newItem = createRootItemInternal(externalId);
 		final HierarchyItem beforeItem = getHierarchyItemWithNullabilityCheck(before, "used as pivot");
 		final List<HierarchyItem> rootItems = getRootItems();
@@ -182,14 +182,14 @@ public class Hierarchy {
 	 * @throws SectionExhausted if there is no room for another item in the section
 	 * @throws MaxLevelExceeded if the level is too deep for hierarchy configuration
 	 */
-	@NonNull
-	public HierarchyItem createItem(@NonNull String externalId, @NonNull String withParent) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
+	@Nonnull
+	public HierarchyItem createItem(@Nonnull String externalId, @Nonnull String withParent) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as parent");
-		if (parentItem.getLevel() + 1 > levels) {
+		if (parentItem.getLevel() + 1 > levels - 1) {
 			throw new MaxLevelExceeded(
-					"Cannot add item on level " + (parentItem.getLevel() + 1) + "! Maximum allowed levels is " + levels + ".",
+					"Cannot add item on level " + (parentItem.getLevel() + 1) + "! Maximum allowed levels is " + (levels - 1) + ".",
 					(short) (parentItem.getLevel() + 1),
-					levels
+					(short) (levels - 1)
 			);
 		}
 		final HierarchyItem newItem = createNewItemUnder(externalId, parentItem);
@@ -215,14 +215,14 @@ public class Hierarchy {
 	 * @throws SectionExhausted if there is no room for another item in the section
 	 * @throws MaxLevelExceeded if the level is too deep for hierarchy configuration
 	 */
-	@NonNull
-	public HierarchyItem createItem(@NonNull String externalId, @NonNull String withParent, String before) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
+	@Nonnull
+	public HierarchyItem createItem(@Nonnull String externalId, @Nonnull String withParent, String before) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as parent");
-		if (parentItem.getLevel() + 1 > levels) {
+		if (parentItem.getLevel() + 1 > levels - 1) {
 			throw new MaxLevelExceeded(
-					"Cannot add item on level " + (parentItem.getLevel() + 1) + "! Maximum allowed levels is " + levels + ".",
-					(short) (parentItem.getLevel() + 1),
-					levels
+				"Cannot add item on level " + (parentItem.getLevel() + 1) + "! Maximum allowed levels is " + (levels - 1) + ".",
+				(short) (parentItem.getLevel() + 1),
+				(short) (levels - 1)
 			);
 		}
 		final HierarchyItem beforeItem = getHierarchyItemWithNullabilityCheck(before, "used as pivot");
@@ -247,7 +247,7 @@ public class Hierarchy {
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 * @throws PivotHierarchyNodeNotFound if externalId item is not found in entire hierarchy
 	 */
-	public void removeItem(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	public void removeItem(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		final HierarchyItem removedItem = getHierarchyItemWithNullabilityCheck(externalId, "removed");
 		final HierarchyItem parentItem = storage.getParentItem(removedItem);
 		for (HierarchyItem itemToRemove : storage.getAllChildrenItems(removedItem)) {
@@ -271,7 +271,7 @@ public class Hierarchy {
 	 * @param withParent code of the other item in the hierarchy that would become parent item of the newly created item
 	 * @param before code of the sibling item that would follow newly created item
 	 */
-	public void moveItemBetweenLevelsBefore(@NonNull String externalId, @NonNull String withParent, @NonNull String before) {
+	public void moveItemBetweenLevelsBefore(@Nonnull String externalId, @Nonnull String withParent, @Nonnull String before) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem beforeItem = getHierarchyItemWithNullabilityCheck(before, "used as pivot");
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as new parent");
@@ -286,7 +286,7 @@ public class Hierarchy {
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 * @param before code of the sibling item that would follow newly created item
 	 */
-	public void moveItemBetweenLevelsBefore(@NonNull String externalId, @NonNull String before) {
+	public void moveItemBetweenLevelsBefore(@Nonnull String externalId, @Nonnull String before) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem beforeItem = getHierarchyItemWithNullabilityCheck(before, "used as pivot");
 
@@ -301,7 +301,7 @@ public class Hierarchy {
 	 * @param withParent code of the other item in the hierarchy that would become parent item of the newly created item
 	 * @param after code of the sibling item that would precede newly created item
 	 */
-	public void moveItemBetweenLevelsAfter(@NonNull String externalId, @NonNull String withParent, @NonNull String after) {
+	public void moveItemBetweenLevelsAfter(@Nonnull String externalId, @Nonnull String withParent, @Nonnull String after) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem afterItem = getHierarchyItemWithNullabilityCheck(after, "used as pivot");
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as new parent");
@@ -316,7 +316,7 @@ public class Hierarchy {
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 * @param after code of the sibling item that would precede newly created item
 	 */
-	public void moveItemBetweenLevelsAfter(@NonNull String externalId, @NonNull String after) {
+	public void moveItemBetweenLevelsAfter(@Nonnull String externalId, @Nonnull String after) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem beforeItem = getHierarchyItemWithNullabilityCheck(after, "used as pivot");
 
@@ -329,7 +329,7 @@ public class Hierarchy {
 	 *
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 */
-	public void moveItemBetweenLevelsFirst(@NonNull String externalId) {
+	public void moveItemBetweenLevelsFirst(@Nonnull String externalId) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 
 		moveItemBetweenLevels(movedItem, null, this::insertIntoNeighboursFirst);
@@ -342,7 +342,7 @@ public class Hierarchy {
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 * @param withParent code of the other item in the hierarchy that would become parent item of the newly created item
 	 */
-	public void moveItemBetweenLevelsFirst(@NonNull String externalId, @NonNull String withParent) {
+	public void moveItemBetweenLevelsFirst(@Nonnull String externalId, @Nonnull String withParent) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as new parent");
 
@@ -356,7 +356,7 @@ public class Hierarchy {
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 * @param withParent code of the other item in the hierarchy that would become parent item of the newly created item
 	 */
-	public void moveItemBetweenLevelsLast(@NonNull String externalId, @NonNull String withParent) {
+	public void moveItemBetweenLevelsLast(@Nonnull String externalId, @Nonnull String withParent) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as new parent");
 
@@ -369,7 +369,7 @@ public class Hierarchy {
 	 *
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 */
-	public void moveItemBetweenLevelsLast(@NonNull String externalId) {
+	public void moveItemBetweenLevelsLast(@Nonnull String externalId) {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 
 		moveItemBetweenLevels(movedItem, null, this::insertIntoNeighboursLast);
@@ -382,7 +382,7 @@ public class Hierarchy {
 	 * @param before code of the sibling item that would follow newly created item
 	 * @throws PivotHierarchyNodeNotFound if externalId or beforeItem is not found in entire hierarchy
 	 */
-	public void moveItemBefore(@NonNull String externalId, @NonNull String before) throws PivotHierarchyNodeNotFound {
+	public void moveItemBefore(@Nonnull String externalId, @Nonnull String before) throws PivotHierarchyNodeNotFound {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem beforeItem = getHierarchyItemWithNullabilityCheck(before, "used as pivot");
 		final HierarchyItem parentItem = storage.getParentItem(movedItem);
@@ -399,7 +399,7 @@ public class Hierarchy {
 	 * @param after code of the sibling item that would precede newly created item
 	 * @throws PivotHierarchyNodeNotFound if externalId or afterItem is not found in entire hierarchy
 	 */
-	public void moveItemAfter(@NonNull String externalId, @NonNull String after) throws PivotHierarchyNodeNotFound {
+	public void moveItemAfter(@Nonnull String externalId, @Nonnull String after) throws PivotHierarchyNodeNotFound {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem afterItem = getHierarchyItemWithNullabilityCheck(after, "used as pivot");
 		final HierarchyItem parentItem = storage.getParentItem(movedItem);
@@ -416,7 +416,7 @@ public class Hierarchy {
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 * @throws PivotHierarchyNodeNotFound if externalId is not found in entire hierarchy
 	 */
-	public void moveItemToFirst(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	public void moveItemToFirst(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem parentItem = storage.getParentItem(movedItem);
 
@@ -429,7 +429,7 @@ public class Hierarchy {
 	 * @param externalId unique code of the item in the hierarchy (usually business code of some external entity)
 	 * @throws PivotHierarchyNodeNotFound if externalId is not found in entire hierarchy
 	 */
-	public void moveItemToLast(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	public void moveItemToLast(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		final HierarchyItem movedItem = getHierarchyItemWithNullabilityCheck(externalId, "moved");
 		final HierarchyItem parentItem = storage.getParentItem(movedItem);
 
@@ -441,7 +441,7 @@ public class Hierarchy {
 	 *
 	 * @return collection of all root items sorted in proper order, empty collection if there is no root node
 	 */
-	@NonNull
+	@Nonnull
 	public List<HierarchyItem> getRootItems() {
 		return storage.getRootItems(code);
 	}
@@ -453,8 +453,8 @@ public class Hierarchy {
 	 * @return collection of all child items sorted in proper order, empty collection if there is no child node
 	 * @throws PivotHierarchyNodeNotFound if withParent is not found in entire hierarchy
 	 */
-	@NonNull
-	public List<HierarchyItem> getChildItems(@NonNull String withParent) throws PivotHierarchyNodeNotFound {
+	@Nonnull
+	public List<HierarchyItem> getChildItems(@Nonnull String withParent) throws PivotHierarchyNodeNotFound {
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as parent");
 		return storage.getChildItems(parentItem);
 	}
@@ -467,7 +467,7 @@ public class Hierarchy {
 	 * @return collection of all leaf items (ie. items having no other children) on any level, empty collection if there is no leaf node
 	 * @throws PivotHierarchyNodeNotFound if withParent is not found in entire hierarchy
 	 */
-	@NonNull
+	@Nonnull
 	public List<HierarchyItem> getLeafItems(String withParent) throws PivotHierarchyNodeNotFound {
 		if (withParent == null) {
 			return storage.getLeafItems(code);
@@ -484,8 +484,8 @@ public class Hierarchy {
 	 * @return item found by its unique code
 	 * @throws PivotHierarchyNodeNotFound if externalId is not found in entire hierarchy
 	 */
-	@NonNull
-	public HierarchyItem getItem(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	@Nonnull
+	public HierarchyItem getItem(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		return getHierarchyItemWithNullabilityCheck(externalId, "retrieved");
 	}
 
@@ -497,7 +497,7 @@ public class Hierarchy {
 	 * @throws PivotHierarchyNodeNotFound if externalId is not found in entire hierarchy
 	 */
 	@Nullable
-	public HierarchyItem getParentItem(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	public HierarchyItem getParentItem(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		final HierarchyItem pivot = getHierarchyItemWithNullabilityCheck(externalId, "used as child pivot");
 		return storage.getParentItem(pivot);
 	}
@@ -509,8 +509,8 @@ public class Hierarchy {
 	 * @return collection of parent items of the item found by its unique code, emtpy colletion if pivot item is root item
 	 * @throws PivotHierarchyNodeNotFound if externalId is not found in entire hierarchy
 	 */
-	@NonNull
-	public List<HierarchyItem> getParentItems(@NonNull String externalId) throws PivotHierarchyNodeNotFound {
+	@Nonnull
+	public List<HierarchyItem> getParentItems(@Nonnull String externalId) throws PivotHierarchyNodeNotFound {
 		final HierarchyItem pivot = getHierarchyItemWithNullabilityCheck(externalId, "used as child pivot");
 		return storage.getParentsOfItem(pivot);
 	}
@@ -519,7 +519,7 @@ public class Hierarchy {
 		PRIVATE METHODS
 	 */
 
-	private HierarchyItem createRootItemInternal(@NonNull String externalId) {
+	private HierarchyItem createRootItemInternal(@Nonnull String externalId) {
 		final SectionWithBucket section = computeBounds();
 		final HierarchyItem newItem = new HierarchyItemWithHistory(code, externalId, (short) 1, section.getLeftBound(), section.getRightBound(), section.getBucket());
 		newItem.setNumberOfChildren((short)0);
@@ -541,7 +541,7 @@ public class Hierarchy {
 		return section;
 	}
 
-	private HierarchyItem createNewItemUnder(@NonNull String externalId, HierarchyItem parentItem) {
+	private HierarchyItem createNewItemUnder(@Nonnull String externalId, HierarchyItem parentItem) {
 		final short targetLevel = (short) (parentItem.getLevel() + 1);
 		final SectionWithBucket section = computeBounds(parentItem, targetLevel);
 		final HierarchyItem newItem = new HierarchyItemWithHistory(code, externalId, targetLevel, section.getLeftBound(), section.getRightBound(), section.getBucket());
@@ -549,7 +549,7 @@ public class Hierarchy {
 		return newItem;
 	}
 
-	private void updateMovedItemBoundsUnder(@NonNull HierarchyItem movedItem, HierarchyItem parentItem) {
+	private void updateMovedItemBoundsUnder(@Nonnull HierarchyItem movedItem, HierarchyItem parentItem) {
 		final short targetLevel;
 		final SectionWithBucket section;
 		if (parentItem == null) {
@@ -585,7 +585,7 @@ public class Hierarchy {
 		return section;
 	}
 
-	private HierarchyItem getHierarchyItemWithNullabilityCheck(@NonNull String externalId, final String reasonToUse) {
+	private HierarchyItem getHierarchyItemWithNullabilityCheck(@Nonnull String externalId, final String reasonToUse) {
 		final HierarchyItem movedItem = storage.getItem(code, externalId);
 		if (movedItem == null) {
 			throw new PivotHierarchyNodeNotFound(
@@ -725,11 +725,11 @@ public class Hierarchy {
 	}
 
 	private void moveItemBetweenLevels(HierarchyItem movedItem, HierarchyItem parentItem, PositioningLogic positioningLogic) {
-		if (parentItem != null && parentItem.getLevel() + 1 > levels) {
+		if (parentItem != null && parentItem.getLevel() + 1 > levels - 1) {
 			throw new MaxLevelExceeded(
-					"Cannot add item on level " + (parentItem.getLevel() + 1) + "! Maximum allowed levels is " + levels + ".",
+					"Cannot add item on level " + (parentItem.getLevel() + 1) + "! Maximum allowed levels is " + (levels - 1) + ".",
 					(short) (parentItem.getLevel() + 1),
-					levels
+					(short) (levels - 1)
 			);
 		}
 
