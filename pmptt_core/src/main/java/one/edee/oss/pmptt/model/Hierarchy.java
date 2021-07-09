@@ -533,7 +533,7 @@ public class Hierarchy {
 		PRIVATE METHODS
 	 */
 
-	public void printTree(@Nullable HierarchyItem fromParent, int indent, int level, StringBuilder sb) {
+	private void printTree(@Nullable HierarchyItem fromParent, int indent, int level, StringBuilder sb) {
 		final List<HierarchyItem> children = fromParent != null ? getChildItems(fromParent.getCode()) : getRootItems();
 		for (HierarchyItem child : children) {
 			for (int i = 0; i < level * indent; i++) {
