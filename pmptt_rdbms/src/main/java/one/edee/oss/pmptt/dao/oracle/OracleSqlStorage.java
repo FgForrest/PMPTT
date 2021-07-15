@@ -68,6 +68,15 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 	}
 
 	@Override
+	public boolean removeHierarchy(String code) {
+		return namedParameterJdbcTemplate
+			.update(
+				"delete from T_MPTT_HIERARCHY where \"code\" = :code",
+				Collections.singletonMap("code", code)
+			) > 0;
+	}
+
+	@Override
 	public void createItem(HierarchyItem newItem, HierarchyItem parent) {
 		namedParameterJdbcTemplate
 				.update(

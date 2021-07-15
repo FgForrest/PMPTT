@@ -53,6 +53,11 @@ public class MemoryStorage implements HierarchyStorage {
 	}
 
 	@Override
+	public boolean removeHierarchy(String code) {
+		return hierarchyIndex.remove(code) != null;
+	}
+
+	@Override
 	public void createItem(HierarchyItem newItem, HierarchyItem parent) {
 		final HierarchyWithContents hierarchyWithContents = getHierarchyWithContents(newItem.getHierarchyCode());
 

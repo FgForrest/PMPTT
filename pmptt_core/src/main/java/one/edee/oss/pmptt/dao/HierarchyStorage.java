@@ -43,6 +43,13 @@ public interface HierarchyStorage {
 	Hierarchy getHierarchy(String code);
 
 	/**
+	 * Removes existing hierarchy of certain code. Returns true if hierarchy was found and removed.
+	 *
+	 * @param code unique code of the hierarchy
+	 */
+	boolean removeHierarchy(String code);
+
+	/**
 	 * Creates new hierarchy item under the passed parent item. Parent might be null and in such case root item is created.
 	 * Upon creation {@link HierarchyChangeListener} is called.
 	 *

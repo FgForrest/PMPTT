@@ -29,7 +29,7 @@ public class PMPTT {
 	}
 
 	/**
-	 * Returns or creates new hierarchy for certain (unique) code.
+	 * Returns or creates new hierarchy of certain (unique) code.
 	 *
 	 * @param code unique code of the hierarchy
 	 * @param levels maximum levels of the hierarchy
@@ -54,6 +54,15 @@ public class PMPTT {
 			);
 			return hierarchy;
 		}
+	}
+
+	/**
+	 * Removes existing hierarchy of certain code. Returns true if hierarchy was found and removed.
+	 *
+	 * @param code unique code of the hierarchy
+	 */
+	public boolean removeHierarchy(String code) {
+		return hierarchyStorage.removeHierarchy(code);
 	}
 
 }

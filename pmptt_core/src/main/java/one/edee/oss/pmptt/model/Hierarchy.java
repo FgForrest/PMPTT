@@ -3,6 +3,7 @@ package one.edee.oss.pmptt.model;
 import lombok.Data;
 import lombok.Setter;
 import one.edee.oss.pmptt.dao.HierarchyStorage;
+import one.edee.oss.pmptt.exception.ItemAlreadyPresent;
 import one.edee.oss.pmptt.exception.MaxLevelExceeded;
 import one.edee.oss.pmptt.exception.NumericTypeExceeded;
 import one.edee.oss.pmptt.exception.PivotHierarchyNodeNotFound;
@@ -144,7 +145,8 @@ public class Hierarchy {
 	 * @throws SectionExhausted if there is no room for another item in the section
 	 */
 	@Nonnull
-	public HierarchyItem createRootItem(@Nonnull String externalId) throws SectionExhausted {
+	public HierarchyItem createRootItem(@Nonnull String externalId) throws SectionExhausted, ItemAlreadyPresent {
+		verifyNotPresentAlready(externalId);
 		final HierarchyItem newItem = createRootItemInternal(externalId);
 		newItem.setOrder((short)(storage.getRootItems(code).size() + 1));
 		storage.createItem(newItem, null);
@@ -161,7 +163,8 @@ public class Hierarchy {
 	 * @throws SectionExhausted if there is no room for another item in the section
 	 */
 	@Nonnull
-	public HierarchyItem createRootItem(@Nonnull String externalId, String before) throws PivotHierarchyNodeNotFound, SectionExhausted {
+	public HierarchyItem createRootItem(@Nonnull String externalId, String before) throws PivotHierarchyNodeNotFound, SectionExhausted, ItemAlreadyPresent {
+		verifyNotPresentAlready(externalId);
 		final HierarchyItem newItem = createRootItemInternal(externalId);
 		final HierarchyItem beforeItem = getHierarchyItemWithNullabilityCheck(before, "used as pivot");
 		final List<HierarchyItem> rootItems = getRootItems();
@@ -183,7 +186,8 @@ public class Hierarchy {
 	 * @throws MaxLevelExceeded if the level is too deep for hierarchy configuration
 	 */
 	@Nonnull
-	public HierarchyItem createItem(@Nonnull String externalId, @Nonnull String withParent) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
+	public HierarchyItem createItem(@Nonnull String externalId, @Nonnull String withParent) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded, ItemAlreadyPresent {
+		verifyNotPresentAlready(externalId);
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as parent");
 		if (parentItem.getLevel() + 1 > levels - 1) {
 			throw new MaxLevelExceeded(
@@ -216,7 +220,8 @@ public class Hierarchy {
 	 * @throws MaxLevelExceeded if the level is too deep for hierarchy configuration
 	 */
 	@Nonnull
-	public HierarchyItem createItem(@Nonnull String externalId, @Nonnull String withParent, String before) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded {
+	public HierarchyItem createItem(@Nonnull String externalId, @Nonnull String withParent, String before) throws PivotHierarchyNodeNotFound, SectionExhausted, MaxLevelExceeded, ItemAlreadyPresent {
+		verifyNotPresentAlready(externalId);
 		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as parent");
 		if (parentItem.getLevel() + 1 > levels - 1) {
 			throw new MaxLevelExceeded(
@@ -532,6 +537,12 @@ public class Hierarchy {
 	/*
 		PRIVATE METHODS
 	 */
+
+	private void verifyNotPresentAlready(String externalId) {
+		if (storage.getItem(code, externalId) != null) {
+			throw new ItemAlreadyPresent(code, externalId);
+		}
+	}
 
 	private void printTree(@Nullable HierarchyItem fromParent, int indent, int level, StringBuilder sb) {
 		final List<HierarchyItem> children = fromParent != null ? getChildItems(fromParent.getCode()) : getRootItems();

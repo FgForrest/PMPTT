@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * No extra information provided - see (selfexplanatory) method signatures.
@@ -37,6 +35,15 @@ public abstract class AbstractPMPTTTest {
 	public void shouldCreateNewHierarchy() {
 		final Hierarchy test = tested.getOrCreateHierarchy("test", (short) 5, (short) 10);
 		assertNotNull(test);
+	}
+
+	@Test
+	public void shouldRemoveExistingHierarchy() {
+		assertFalse(tested.removeHierarchy("test"));
+		final Hierarchy test = tested.getOrCreateHierarchy("test", (short) 5, (short) 10);
+		assertNotNull(test);
+		assertNotNull(tested.getOrCreateHierarchy("test", (short) 5, (short) 10));
+		assertTrue(tested.removeHierarchy("test"));
 	}
 
 	@Test
