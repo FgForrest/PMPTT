@@ -7,6 +7,7 @@ import one.edee.oss.pmptt.spi.HierarchyChangeListener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,6 +42,12 @@ public interface HierarchyStorage {
 	 */
 	@Nullable
 	Hierarchy getHierarchy(String code);
+
+	/**
+	 * Returns collection of all existing hierarchies known to this PMPTT instance.
+	 * @return
+	 */
+	Collection<String> getExistingHierarchyCodes();
 
 	/**
 	 * Removes existing hierarchy of certain code. Returns true if hierarchy was found and removed.

@@ -18,10 +18,12 @@ import org.springframework.util.Assert;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Oracle implementation of {@link HierarchyStorage}
@@ -65,6 +67,18 @@ public class OracleSqlStorage implements DbHierarchyStorage {
 		} catch (EmptyResultDataAccessException ex) {
 			return null;
 		}
+	}
+
+	@Override
+	public Collection<String> getExistingHierarchyCodes() {
+		return namedParameterJdbcTemplate
+			.queryForList(
+				"select \"code\" from T_MPTT_HIERARCHY",
+				Collections.emptyMap()
+			)
+			.stream()
+			.map(it -> (String) it.get("code"))
+			.collect(Collectors.toList());
 	}
 
 	@Override

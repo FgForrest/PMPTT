@@ -6,6 +6,8 @@ import one.edee.oss.pmptt.model.Hierarchy;
 import one.edee.oss.pmptt.spi.HierarchyChangeListener;
 import one.edee.oss.pmptt.util.Assert;
 
+import java.util.Collection;
+
 /**
  * Base class of the Pre-allocated Modified Preorder Tree Traversal algorithm. For algorithm description see documentation
  * for {@link Hierarchy}. This class servers to maintain list of multiple hierarchies distinguished by their code and
@@ -63,6 +65,14 @@ public class PMPTT {
 	 */
 	public boolean removeHierarchy(String code) {
 		return hierarchyStorage.removeHierarchy(code);
+	}
+
+	/**
+	 * Returns collection of all existing hierarchies known to this PMPTT instance.
+	 * @return
+	 */
+	public Collection<String> getExistingHierarchyCodes() {
+		return hierarchyStorage.getExistingHierarchyCodes();
 	}
 
 }

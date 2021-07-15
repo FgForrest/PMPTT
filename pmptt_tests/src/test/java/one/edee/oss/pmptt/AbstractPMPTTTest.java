@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +36,9 @@ public abstract class AbstractPMPTTTest {
 	public void shouldCreateNewHierarchy() {
 		final Hierarchy test = tested.getOrCreateHierarchy("test", (short) 5, (short) 10);
 		assertNotNull(test);
+		final Collection<String> existingHierarchyCodes = tested.getExistingHierarchyCodes();
+		assertEquals(1, existingHierarchyCodes.size());
+		assertEquals("test", existingHierarchyCodes.iterator().next());
 	}
 
 	@Test

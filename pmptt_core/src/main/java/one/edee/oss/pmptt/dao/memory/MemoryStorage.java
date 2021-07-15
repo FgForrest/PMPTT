@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -50,6 +51,11 @@ public class MemoryStorage implements HierarchyStorage {
 	public Hierarchy getHierarchy(String code) {
 		final HierarchyWithContents hierarchyWithContents = hierarchyIndex.get(code);
 		return hierarchyWithContents == null ? null : hierarchyWithContents.getHierarchy();
+	}
+
+	@Override
+	public Collection<String> getExistingHierarchyCodes() {
+		return hierarchyIndex.keySet();
 	}
 
 	@Override
