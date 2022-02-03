@@ -465,6 +465,20 @@ public class Hierarchy {
 	}
 
 	/**
+	 * Returns flat ordered collection of all the children items not only on direct ones, but all nested children (deep
+	 * search) of requested parent item.
+	 *
+	 * @param withParent code of the other item in the hierarchy that would become parent item of the newly created item
+	 * @return collection of all child items sorted in proper order, empty collection if there is no child node
+	 * @throws PivotHierarchyNodeNotFound if withParent is not found in entire hierarchy
+	 */
+	@Nonnull
+	public List<HierarchyItem> getAllChildItems(@Nonnull String withParent) throws PivotHierarchyNodeNotFound {
+		final HierarchyItem parentItem = getHierarchyItemWithNullabilityCheck(withParent, "used as parent");
+		return storage.getAllChildrenItems(parentItem);
+	}
+
+	/**
 	 * Returns flat ordered collection of all the leaf items in the tree substructure. Leaf item is the item that has
 	 * no other children.
 	 *

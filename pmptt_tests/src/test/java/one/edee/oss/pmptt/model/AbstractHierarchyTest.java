@@ -558,6 +558,13 @@ public abstract class AbstractHierarchyTest {
 	}
 
 	@Test
+	public void shouldGetAllChildItems() {
+		StructureLoader.loadHierarchy(TREE_5_4, tested);
+
+		assertItems(tested.getAllChildItems("Jídelna"), "Barové židle", "Stoly", "Židle", "Barové stoly", "Dřevěné stoly", "Jidelní sestavy", "Dřevěné židle", "Kovové židle");
+	}
+
+	@Test
 	public void shouldGetChildItemsLowLevel() {
 		StructureLoader.loadHierarchy(TREE_5_4, tested);
 
