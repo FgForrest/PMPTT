@@ -19,8 +19,11 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -561,7 +564,7 @@ public abstract class AbstractHierarchyTest {
 	public void shouldGetAllChildItems() {
 		StructureLoader.loadHierarchy(TREE_5_4, tested);
 
-		assertItems(tested.getAllChildItems("Jídelna"), "Barové židle", "Stoly", "Židle", "Barové stoly", "Dřevěné stoly", "Jidelní sestavy", "Dřevěné židle", "Kovové židle");
+		assertItemsIgnoringOrder(tested.getAllChildItems("Jídelna"), "Barové židle", "Stoly", "Židle", "Barové stoly", "Dřevěné stoly", "Jidelní sestavy", "Dřevěné židle", "Kovové židle");
 	}
 
 	@Test
@@ -643,6 +646,14 @@ public abstract class AbstractHierarchyTest {
 		for (int i = 0; i < codes.length; i++) {
 			final String expected = codes[i];
 			Assertions.assertEquals(expected, items.get(i).getCode());
+		}
+	}
+
+	private void assertItemsIgnoringOrder(List<HierarchyItem> items, String... codes) {
+		assertEquals(codes.length, items.size());
+		final Set<String> expectedSet = new HashSet<>(Arrays.asList(codes));
+		for (final String expected : codes) {
+			Assertions.assertTrue(expectedSet.contains(expected), "Expected category " + expected + " not present!");
 		}
 	}
 
