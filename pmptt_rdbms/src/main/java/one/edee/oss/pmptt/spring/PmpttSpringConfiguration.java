@@ -22,7 +22,7 @@ public class PmpttSpringConfiguration {
 
 	@Bean
 	public Darwin pmpttDarwin(ApplicationContext applicationContext) {
-		return new DarwinBuilder(applicationContext, "pmptt", "1.0")
+		return new DarwinBuilder(applicationContext, "pmptt", "1.3")
 				.withResourcePath("classpath:/META-INF/pmptt_rdbms/sql/")
 				.build();
 	}
