@@ -1,0 +1,1 @@
+select * from T_MPTT_HIERARCHY;

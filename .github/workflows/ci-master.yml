@@ -1,0 +1,73 @@
+# Release build pipeline, operates on `release_*` branches and creates releases
+
+name: CI Release branch
+
+on:
+  push:
+    branches: [ "master" ]         # trap each push to master branch
+    paths:                         # but react only to changes in code or pipeline definition
+      - src/**.*
+      - .github/**.*
+
+jobs:
+  build:
+    permissions:
+      # write permission is required to create a github release
+      contents: write
+      # write permission is required for autolabeler
+      # otherwise, read permission is required at least
+      pull-requests: write
+
+    outputs:
+      release_id: ${{ steps.create_release.outputs.id }}
+      released_version: ${{ steps.release_version.outputs.version }}
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2    # checkout sources
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Resolve new release version
+        id: release_version
+        uses: codacy/git-version@4be4819f45a11cd0877c05ffe41dace2f8945ff4
+        with:
+          prefix: 'v'
+          minor-identifier: '/feat(?:\\([^)]+\\))?:/'
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1 setup JDK 17 for building
+        with:
+          java-version: 8
+          distribution: 'temurin'
+          cache: 'maven'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Build with Maven
+        run: |        
+          export CURRENT_VERSION="${{ steps.release_version.outputs.version }}"
+          export NEW_VERSION="$( echo ${CURRENT_VERSION} | sed 's/^v//')"
+          mvn versions:set -DnewVersion=$NEW_VERSION
+          mvn -T 1C -B -P release-sign-artifacts -Dmaven.test.skip=true deploy --file pom.xml
+        env:
+          PMPTT_BUILD_VERSION: ${{ steps.release_version.outputs.version }}
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+      - name: Create release
+        id: create_release
+        uses: release-drafter/release-drafter@b1476f6e6eb133afa41ed8589daba6dc69b4d3f5 # v6.1.0
+        with:
+          version: ${{ steps.release_version.outputs.version }}
+          publish: true

@@ -3,11 +3,7 @@ package one.edee.oss.pmptt.dao.mysql;
 import lombok.Getter;
 import one.edee.oss.pmptt.dao.DbHierarchyStorage;
 import one.edee.oss.pmptt.dao.HierarchyStorage;
-import one.edee.oss.pmptt.model.DbHierarchy;
-import one.edee.oss.pmptt.model.Hierarchy;
-import one.edee.oss.pmptt.model.HierarchyItem;
-import one.edee.oss.pmptt.model.HierarchyItemWithHistory;
-import one.edee.oss.pmptt.model.SectionWithBucket;
+import one.edee.oss.pmptt.model.*;
 import one.edee.oss.pmptt.spi.HierarchyChangeListener;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -19,11 +15,7 @@ import org.springframework.util.Assert;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -99,8 +91,9 @@ public class MySqlStorage implements DbHierarchyStorage {
 	public void createItem(HierarchyItem newItem, HierarchyItem parent) {
 		namedParameterJdbcTemplate
 			.update(
-				"insert into T_MPTT_ITEM (code, hierarchyCode, level, leftBound, rightBound, numberOfChildren, `order`, bucket) " +
-					"values (:code, :hierarchyCode, :level, :leftBound, :rightBound, :numberOfChildren, :order, :bucket)",
+				"insert into T_MPTT_ITEM (code, hierarchyCode, level, leftBound, rightBound, numberOfChildren, `order`, bucket, hierarchy_id) " +
+					"values (:code, :hierarchyCode, :level, :leftBound, :rightBound, :numberOfChildren, :order, :bucket, " +
+					"(select id from T_MPTT_HIERARCHY where code = :hierarchyCode))",
 				new BeanPropertySqlParameterSource(newItem)
 			);
 		for (HierarchyChangeListener changeListener : changeListeners) {

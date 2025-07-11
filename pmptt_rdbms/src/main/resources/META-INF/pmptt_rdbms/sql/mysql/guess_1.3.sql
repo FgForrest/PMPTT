@@ -1,0 +1,1 @@
+select id from T_MPTT_HIERARCHY;
